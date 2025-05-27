@@ -5,10 +5,12 @@ import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentDto;
 import com.vgt.tournaments.repositories.TournamentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -40,6 +42,16 @@ public class TournamentService {
 
     return tournamentRepository.save(tournament);
   }
+
+  public List<Tournament> findAll() {
+      return tournamentRepository.findAll();
+  }
+
+  public Tournament findById(Long id) {
+    return tournamentRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("The tournament does not exist"));
+  }
+
 
   public Tournament update(Long id, UpdateTournamentDto dto) {
 
