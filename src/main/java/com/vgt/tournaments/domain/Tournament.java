@@ -3,9 +3,11 @@ package com.vgt.tournaments.domain;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor
