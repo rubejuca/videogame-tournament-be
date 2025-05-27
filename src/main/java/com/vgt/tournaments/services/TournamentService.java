@@ -3,6 +3,7 @@ package com.vgt.tournaments.services;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,31 @@ public class TournamentService {
     return tournamentRepository.save(tournament);
   }
 
+  public Tournament update(Long id, UpdateTournamentDto dto) {
+
+    Tournament currentTournament = tournamentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("The tournament does not exist"));
+
+    validateTournamentUpdate(currentTournament.getStatus());
+
+    Tournament tournament = currentTournament.toBuilder()
+        .name(dto.name())
+        .gameTitle(dto.gameTitle())
+        .maxPlayers(dto.maxPlayers())
+        .startDate(dto.startDate().toEpochDay())
+        .status(dto.status())
+        .build();
+
+    return tournamentRepository.save(tournament);
+  }
+
+  private static void validateTournamentUpdate(TournamentStatus status) {
+
+    if (status == TournamentStatus.STARTED){
+      throw new IllegalArgumentException("The Tournament has started");
+    }
+  }
+
   private static void validateMaxPlayers(int maxPlayers) {
     if (maxPlayers <= 1) {
       throw new IllegalArgumentException("The minimum number of players is 2");
@@ -54,4 +80,5 @@ public class TournamentService {
       throw new IllegalArgumentException("The start date can not be in the past");
     }
   }
+
 }
