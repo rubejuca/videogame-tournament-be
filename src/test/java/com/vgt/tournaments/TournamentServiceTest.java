@@ -16,6 +16,65 @@ import static org.mockito.Mockito.*;
 
 public class TournamentServiceTest {
 
+
+  @Test
+  void testDeleteSuccess() {
+
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+    TournamentService tournamentService = new TournamentService(tournamentRepository);
+
+    Tournament tournament = Tournament.builder()
+        .id(1L)
+        .name("Aaron Peña")
+        .gameTitle("second tournament")
+        .maxPlayers(5)
+        .startDate(212L)
+        .status(TournamentStatus.UPCOMING)
+        .build();
+
+    when(tournamentRepository
+        .findById(1L))
+        .thenReturn(Optional.of(tournament));
+
+    tournamentService.delete(1L);
+
+    verify(tournamentRepository, times(1))
+        .findById(1L);
+
+    verify(tournamentRepository, times(1))
+        .delete(any());
+
+  }
+  @Test
+  void testDeleteFail() {
+
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+    TournamentService tournamentService = new TournamentService(tournamentRepository);
+
+    Tournament tournament = Tournament.builder()
+        .id(1L)
+        .name("Aaron Peña")
+        .gameTitle("second tournament")
+        .maxPlayers(5)
+        .startDate(212L)
+        .status(TournamentStatus.STARTED)
+        .build();
+
+    when(tournamentRepository
+        .findById(1L))
+        .thenReturn(Optional.of(tournament));
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      tournamentService.delete(1L);
+    });
+
+    verify(tournamentRepository, times(1))
+        .findById(1L);
+
+    verifyNoMoreInteractions(tournamentRepository);
+
+  }
+
   @Test
   void testUpdateSuccess() {
 
