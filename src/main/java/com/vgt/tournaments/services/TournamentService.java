@@ -1,9 +1,9 @@
 package com.vgt.tournaments.services;
 
+import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentDto;
-import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,6 +66,14 @@ public class TournamentService {
     }
   }
 
+  public void delete(Long id) {
+    Tournament deletedTournament = tournamentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Tournament not found with ID: " + id));
+
+    validateTournamentStatusForDeletion(deletedTournament.getStatus());
+    tournamentRepository.delete(deletedTournament);
+  }
+
   private static void validateMaxPlayers(int maxPlayers) {
     if (maxPlayers <= 1) {
       throw new IllegalArgumentException("The minimum number of players is 2");
@@ -78,6 +86,12 @@ public class TournamentService {
     }
     if (LocalDate.now().isAfter(startDate)) {
       throw new IllegalArgumentException("The start date can not be in the past");
+    }
+  }
+
+  private static void validateTournamentStatusForDeletion(TournamentStatus status) {
+    if (status == TournamentStatus.STARTED) {
+      throw new IllegalArgumentException("The tournament is already started");
     }
   }
 

@@ -6,6 +6,8 @@ import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.services.TournamentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class TournamentController {
@@ -28,4 +30,14 @@ public class TournamentController {
     return tournamentService.update(id, dto);
   }
 
+
+  @DeleteMapping("/api/tournaments/{id}")
+  ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
+    try {
+      tournamentService.delete(id);
+      return ResponseEntity.noContent().build();
+    } catch (IllegalArgumentException e) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+  }
 }
