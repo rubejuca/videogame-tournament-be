@@ -4,6 +4,7 @@ import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -73,11 +74,10 @@ public class TournamentService {
 
   private static void validateTournamentUpdate(TournamentStatus status) {
 
-    if (status == TournamentStatus.STARTED){
-      throw new IllegalArgumentException("The Tournament has started");
-    }
+      if (status == TournamentStatus.STARTED) {
+          throw new IllegalArgumentException("The Tournament has started");
+      }
   }
-
   public void delete(Long id) {
     Tournament deletedTournament = tournamentRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("Tournament not found with ID: " + id));
@@ -85,6 +85,7 @@ public class TournamentService {
     validateTournamentStatusForDeletion(deletedTournament.getStatus());
     tournamentRepository.delete(deletedTournament);
   }
+
 
   private static void validateMaxPlayers(int maxPlayers) {
     if (maxPlayers <= 1) {
