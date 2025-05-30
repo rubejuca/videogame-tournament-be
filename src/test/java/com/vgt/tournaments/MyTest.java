@@ -12,7 +12,7 @@ public class MyTest {
 
     long epochDay = date.toEpochDay();
 
-    LocalDate localDate = LocalDate.ofEpochDay(-1);
+    LocalDate localDate = LocalDate.ofEpochDay(20234);
 
 
     System.out.println(date);

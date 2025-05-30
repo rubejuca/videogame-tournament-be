@@ -3,16 +3,16 @@ package com.vgt.tournaments.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Builder(toBuilder = true)
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "player")
 public class Player {
-
   @Id
   @GeneratedValue(strategy= GenerationType.IDENTITY)
   @Column(name = "id")
