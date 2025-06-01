@@ -87,6 +87,7 @@ public class TournamentService {
   }
 
 
+
   private static void validateMaxPlayers(int maxPlayers) {
     if (maxPlayers <= 1) {
       throw new IllegalArgumentException("The minimum number of players is 2");
