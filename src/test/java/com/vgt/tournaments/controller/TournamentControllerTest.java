@@ -4,16 +4,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+<<<<<<< HEAD
 import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
+=======
+import com.vgt.tournaments.services.TournamentService;
+>>>>>>> 9db515a760a7a95add48e3a6d5a36099eb39a07d
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+=======
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+>>>>>>> 9db515a760a7a95add48e3a6d5a36099eb39a07d
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 
@@ -22,6 +33,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+<<<<<<< HEAD
 @SpringBootTest
 @AutoConfigureMockMvc
 class TournamentControllerTest {
@@ -151,8 +163,26 @@ class TournamentControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(dto)))
             .andExpect(status().isBadRequest());
+
+
+
+@WebMvcTest(TournamentController.class)
+public class TournamentControllerTest {
+
+  private Tournament tournament;
+  private TournamentService tournamentService;
+  private TournamentController tournamentController;
+
+
+  @BeforeEach
+  void setUp() {
+
+    TournamentService tournamentService = Mockito.mock(TournamentService.class);
+    TournamentController tournamentController = new TournamentController(tournamentService);
+
   }
 
-
 }
+}
+
 

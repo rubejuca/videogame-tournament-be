@@ -1,5 +1,10 @@
 package com.vgt.tournaments;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentRequestDto;
@@ -8,16 +13,11 @@ import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import com.vgt.tournaments.services.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TournamentServiceTest {
 
@@ -381,4 +381,54 @@ public class TournamentServiceTest {
 
     verifyNoMoreInteractions(tournamentRepository);
   }
+
+  @Test
+  void testGetPlayersTournamentSuccess() {
+
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+    
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
+    Tournament tournament =
+        Tournament.builder()
+            .id(1L)
+            .name("juan camilo")
+            .gameTitle("second tournament")
+            .maxPlayers(5)
+            .startDate(212L)
+            .status(TournamentStatus.UPCOMING)
+            .build();
+
+    when(tournamentRepository.findById(1L))
+        .thenReturn(Optional.of(tournament));
+
+    List<Player> players = tournamentService.getTournamentPlayers(1L);
+
+    assertNotNull(players);
+    assertEquals(players.size(), 0);
+  }
+
+  @Test
+  void testGetPlayersTournamentFail() {
+
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
+    when(tournamentRepository.findById(1L))
+        .thenReturn(Optional.empty());
+
+    EntityNotFoundException entityNotFoundException = assertThrows(EntityNotFoundException.class, () -> {
+      tournamentService.getTournamentPlayers(1L);
+
+    });
+
+    assertEquals("The tournament does not exist", entityNotFoundException.getMessage());
+
+    verify(tournamentRepository, times(1))
+        .findById(1L);
+  }
+
 }
