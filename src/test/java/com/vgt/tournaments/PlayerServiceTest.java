@@ -23,17 +23,10 @@ import static org.mockito.Mockito.*;
 class PlayerServiceTest {
 
     @Test
-    void testCreate() {
+    void testDelete() {
         PlayerRepository playerRepository = mock(PlayerRepository.class);
         TournamentRepository tournamentRepository = mock(TournamentRepository.class);
         PlayerService playerService = new PlayerService(playerRepository, tournamentRepository);
-
-        CreatePlayerDto dto = CreatePlayerDto.builder()
-                .name("Danna")
-                .nickName("Sakura")
-                .tournamentId(1L)
-                .registrationDate(LocalDate.now())
-                .build();
 
         Player player = Player.builder()
                 .name("Danna")
@@ -42,23 +35,11 @@ class PlayerServiceTest {
                 .registrationDate(LocalDate.now().toEpochDay())
                 .build();
 
-        Tournament tournament = Tournament.builder()
-                .id(1L)
-                .maxPlayers(10)
-                .status(TournamentStatus.UPCOMING)
-                .startDate(LocalDate.now().plusDays(1).toEpochDay())
-                .build();
+        when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
 
+        playerService.delete(1L);
 
-        when(tournamentRepository.findById(1L)).thenReturn(Optional.of(tournament));
-        when(playerRepository.findPlayersByTournamentId(1L)).thenReturn(Collections.emptyList());
-        when(playerRepository.save(any())).thenReturn(player);
-
-        Player createdPlayer = playerService.create(dto);
-
-        assertNotNull(createdPlayer);
-        assertEquals(player.getName(), createdPlayer.getName());
-        assertEquals(player.getNickName(), createdPlayer.getNickName());
-        assertEquals(player.getTournamentId(), createdPlayer.getTournamentId());
+        verify(playerRepository, times(1)).findById(1L);
+        verify(playerRepository, times(1)).delete(any());
     }
 }

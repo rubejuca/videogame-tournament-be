@@ -4,7 +4,6 @@ import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentDto;
-import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -102,8 +101,8 @@ public class TournamentService {
     }
   }
 
-  private static void validateTournamentStatusForDeletion(TournamentStatus status) {
-    if (status == TournamentStatus.STARTED) {
+  private static void validateTournamentStatusForDeletion(TournamentStatus tournament) {
+    if (tournament.isStarted()) {
       throw new IllegalArgumentException("The tournament is already started");
     }
   }

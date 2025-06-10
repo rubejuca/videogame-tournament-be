@@ -1,6 +1,5 @@
 package com.vgt.tournaments.controller;
 
-
 import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.dto.CreatePlayerDto;
 import com.vgt.tournaments.services.PlayerService;
@@ -17,6 +16,7 @@ public class PlayerController {
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
     }
+
     @PostMapping("/api/players")
     @ResponseStatus(HttpStatus.CREATED)
     public Player create(@RequestBody CreatePlayerDto dto) {
