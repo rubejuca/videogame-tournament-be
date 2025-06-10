@@ -1,22 +1,23 @@
 package com.vgt.tournaments;
 
-import com.vgt.tournaments.domain.Tournament;
-import com.vgt.tournaments.domain.enums.TournamentStatus;
-import com.vgt.tournaments.dto.CreateTournamentDto;
-import com.vgt.tournaments.dto.UpdateTournamentDto;
-import com.vgt.tournaments.repositories.TournamentRepository;
-import com.vgt.tournaments.services.TournamentService;
-import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
+import com.vgt.tournaments.domain.Player;
+import com.vgt.tournaments.domain.Tournament;
+import com.vgt.tournaments.domain.enums.TournamentStatus;
+import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
+import com.vgt.tournaments.repositories.PlayerRepository;
+import com.vgt.tournaments.repositories.TournamentRepository;
+import com.vgt.tournaments.services.TournamentService;
+import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TournamentServiceTest {
 
@@ -24,11 +25,13 @@ public class TournamentServiceTest {
   @Test
   void testCreateSuccess() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
 
 
-      CreateTournamentDto dto = CreateTournamentDto.builder()
+
+    CreateTournamentRequestDto dto = CreateTournamentRequestDto.builder()
           .name("juan")
           .gameTitle("first tournament")
           .maxPlayers(5)
@@ -57,10 +60,12 @@ public class TournamentServiceTest {
     void testCreateFailButMaxPlayers() throws Exception {
 
 
+      PlayerRepository playerRepository = mock(PlayerRepository.class);
       TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-      TournamentService tournamentService = new TournamentService(tournamentRepository);
+      TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
 
-      CreateTournamentDto dto = CreateTournamentDto.builder()
+
+      CreateTournamentRequestDto dto = CreateTournamentRequestDto.builder()
           .name("juan")
           .gameTitle("first tournament")
           .maxPlayers(1)
@@ -79,13 +84,41 @@ public class TournamentServiceTest {
     }
 
     @Test
+    void testCreateFailButNameDuplicate() throws Exception {
+
+
+      PlayerRepository playerRepository = mock(PlayerRepository.class);
+      TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+      TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
+      CreateTournamentRequestDto dto = CreateTournamentRequestDto.builder()
+          .name("juan")
+          .gameTitle("first tournament")
+          .maxPlayers(5)
+          .startDate(LocalDate.now())
+          .build();
+
+      when(tournamentRepository.findByName(dto.name()))
+          .thenReturn(new Tournament());
+
+      IllegalStateException exception = assertThrows(IllegalStateException.class,
+          () -> {tournamentService.create(dto);
+      });
+      assertEquals("The tournament name already exists", exception.getMessage());
+
+
+    }
+
+    @Test
     void testCreateFailButStartDate() throws Exception {
 
 
+      PlayerRepository playerRepository = mock(PlayerRepository.class);
       TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-      TournamentService tournamentService = new TournamentService(tournamentRepository);
+      TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
 
-      CreateTournamentDto dto = CreateTournamentDto.builder()
+
+      CreateTournamentRequestDto dto = CreateTournamentRequestDto.builder()
           .name("juan")
           .gameTitle("first tournament")
           .maxPlayers(5)
@@ -107,10 +140,12 @@ public class TournamentServiceTest {
     void testCreateFailButStartDateNull() throws Exception {
 
 
+      PlayerRepository playerRepository = mock(PlayerRepository.class);
       TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-      TournamentService tournamentService = new TournamentService(tournamentRepository);
+      TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
 
-      CreateTournamentDto dto = CreateTournamentDto.builder()
+
+      CreateTournamentRequestDto dto = CreateTournamentRequestDto.builder()
           .name("juan")
           .gameTitle("first tournament")
           .maxPlayers(5)
@@ -133,8 +168,10 @@ public class TournamentServiceTest {
   @Test
   void testFindAllSuccess() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     when(tournamentRepository
         .findAll())
@@ -155,8 +192,10 @@ public class TournamentServiceTest {
   @Test
   void testFindByIdSuccess() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     Tournament tournament = Tournament.builder()
         .id(1L)
@@ -179,8 +218,10 @@ public class TournamentServiceTest {
   @Test
   void testFindByIdFail() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     when(tournamentRepository
         .findById(1L))
@@ -194,8 +235,10 @@ public class TournamentServiceTest {
   @Test
   void testDeleteSuccess() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     Tournament tournament = Tournament.builder()
         .id(1L)
@@ -222,8 +265,10 @@ public class TournamentServiceTest {
   @Test
   void testDeleteFail() {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     Tournament tournament = Tournament.builder()
         .id(1L)
@@ -251,9 +296,9 @@ public class TournamentServiceTest {
 
   @Test
   void testUpdateSuccess() {
-
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
 
     UpdateTournamentDto dto = UpdateTournamentDto.builder()
         .name("juan")
@@ -296,8 +341,10 @@ public class TournamentServiceTest {
   @Test
   void testUpdateFail() throws Exception {
 
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
     TournamentRepository tournamentRepository = mock(TournamentRepository.class);
-    TournamentService tournamentService = new TournamentService(tournamentRepository);
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
 
     UpdateTournamentDto dto = UpdateTournamentDto.builder()
         .name("juan")
@@ -334,4 +381,54 @@ public class TournamentServiceTest {
 
     verifyNoMoreInteractions(tournamentRepository);
   }
+
+  @Test
+  void testGetPlayersTournamentSuccess() {
+
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+    
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
+    Tournament tournament =
+        Tournament.builder()
+            .id(1L)
+            .name("juan camilo")
+            .gameTitle("second tournament")
+            .maxPlayers(5)
+            .startDate(212L)
+            .status(TournamentStatus.UPCOMING)
+            .build();
+
+    when(tournamentRepository.findById(1L))
+        .thenReturn(Optional.of(tournament));
+
+    List<Player> players = tournamentService.getTournamentPlayers(1L);
+
+    assertNotNull(players);
+    assertEquals(players.size(), 0);
+  }
+
+  @Test
+  void testGetPlayersTournamentFail() {
+
+    PlayerRepository playerRepository = mock(PlayerRepository.class);
+    TournamentRepository tournamentRepository = mock(TournamentRepository.class);
+
+    TournamentService tournamentService = new TournamentService(tournamentRepository, playerRepository);
+
+    when(tournamentRepository.findById(1L))
+        .thenReturn(Optional.empty());
+
+    EntityNotFoundException entityNotFoundException = assertThrows(EntityNotFoundException.class, () -> {
+      tournamentService.getTournamentPlayers(1L);
+
+    });
+
+    assertEquals("The tournament does not exist", entityNotFoundException.getMessage());
+
+    verify(tournamentRepository, times(1))
+        .findById(1L);
+  }
+
 }

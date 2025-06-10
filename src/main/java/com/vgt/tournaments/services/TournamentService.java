@@ -1,30 +1,35 @@
 package com.vgt.tournaments.services;
 
-import com.vgt.tournaments.dto.UpdateTournamentDto;
+import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
-import com.vgt.tournaments.dto.CreateTournamentDto;
+import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
+import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class TournamentService {
 
   private final TournamentRepository tournamentRepository;
+  private final PlayerRepository playerRepository;
 
-  public TournamentService(TournamentRepository tournamentRepository) {
+  public TournamentService(TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
     this.tournamentRepository = tournamentRepository;
+    this.playerRepository = playerRepository;
   }
 
-  public Tournament create(CreateTournamentDto dto) {
+  public Tournament create(CreateTournamentRequestDto dto) {
 
     log.info("Creating: {}", dto);
+
+    validateDuplicateTournamentName(dto.name());
 
     validateStartDate(dto.startDate());
 
@@ -71,6 +76,18 @@ public class TournamentService {
     return tournamentRepository.save(tournament);
   }
 
+  public  List<Player> getTournamentPlayers(Long tournamentId) {
+
+    tournamentRepository
+        .findById(tournamentId)
+        .orElseThrow(() -> new EntityNotFoundException("The tournament does not exist"));
+
+    List<Player> players = playerRepository.findByTournamentId(tournamentId);
+
+    return players;
+  }
+
+
   private static void validateTournamentUpdate(TournamentStatus status) {
 
       if (status == TournamentStatus.STARTED) {
@@ -83,6 +100,13 @@ public class TournamentService {
 
     validateTournamentStatusForDeletion(deletedTournament.getStatus());
     tournamentRepository.delete(deletedTournament);
+  }
+
+  public void validateDuplicateTournamentName(String name) {
+
+    if (tournamentRepository.findByName(name) != null) {
+      throw new IllegalStateException("The tournament name already exists");
+    }
   }
 
 
