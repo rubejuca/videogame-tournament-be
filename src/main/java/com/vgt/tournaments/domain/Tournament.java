@@ -36,7 +36,16 @@ public class Tournament {
   @Column(name = "status")
   private TournamentStatus status;
 
+  public boolean isStarted() {
+    return status == TournamentStatus.STARTED;
+  }
 
+  public boolean isFinished() {
+    return status == TournamentStatus.FINISHED;
+  }
 
+  public boolean canAddPlayers() {
+    return isStarted() && !isFinished();
+  }
 
 }

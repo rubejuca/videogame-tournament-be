@@ -1,18 +1,17 @@
 package com.vgt.tournaments.services;
 
 import com.vgt.tournaments.domain.Player;
-import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -125,8 +124,8 @@ public class TournamentService {
     }
   }
 
-  private static void validateTournamentStatusForDeletion(TournamentStatus status) {
-    if (status == TournamentStatus.STARTED) {
+  private static void validateTournamentStatusForDeletion(TournamentStatus tournament) {
+    if (tournament.isStarted()) {
       throw new IllegalArgumentException("The tournament is already started");
     }
   }

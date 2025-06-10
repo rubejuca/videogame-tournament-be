@@ -7,11 +7,10 @@ import com.vgt.tournaments.dto.CreatePlayerRequestDto;
 import com.vgt.tournaments.dto.UpdatePlayerDto;
 import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -100,8 +99,6 @@ public class PlayerService {
 
     }
 
-
-
     private static void validateMaxPlayers(int currentPlayers, int maxPlayers) {
         if (currentPlayers == maxPlayers) {
             throw new IllegalArgumentException("The maximum number of players is " + maxPlayers);
@@ -140,8 +137,6 @@ public class PlayerService {
                 .getStartDate()
         );
     }
-
-
 
 
 }

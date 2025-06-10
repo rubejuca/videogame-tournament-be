@@ -1,19 +1,14 @@
 package com.vgt.tournaments.controller;
 
-
 import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.dto.CreatePlayerRequestDto;
 import com.vgt.tournaments.dto.PlayerResponseDto;
 import com.vgt.tournaments.dto.UpdatePlayerDto;
 import com.vgt.tournaments.services.PlayerService;
-import com.vgt.tournaments.services.TournamentService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class PlayerController {
@@ -22,6 +17,7 @@ public class PlayerController {
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
     }
+
     @PostMapping("/api/players")
     @ResponseStatus(HttpStatus.CREATED)
     public PlayerResponseDto create(@RequestBody CreatePlayerRequestDto dto) {
