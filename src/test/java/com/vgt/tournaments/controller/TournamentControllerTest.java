@@ -8,13 +8,15 @@ import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentRequestDto;
 import com.vgt.tournaments.services.TournamentService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 
@@ -22,21 +24,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+
+
 @WebMvcTest(TournamentController.class)
 public class TournamentControllerTest {
 
-  @Autowired
-  MockMvc mockMvc;
+  private Tournament tournament;
+  private TournamentService tournamentService;
+  private TournamentController tournamentController;
 
-  @MockBean
-  TournamentService tournamentService;
 
-  private ObjectMapper objectMapper = JsonMapper
-      .builder()
-      .addModule(new Jdk8Module())
-      .addModule(new JavaTimeModule())
-      .build();
+  @BeforeEach
+  void setUp() {
 
+    TournamentService tournamentService = Mockito.mock(TournamentService.class);
+    TournamentController tournamentController = new TournamentController(tournamentService);
+  }
 
 
 }
+
+
