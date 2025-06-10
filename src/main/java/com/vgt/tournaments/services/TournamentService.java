@@ -78,8 +78,9 @@ public class TournamentService {
 
   public  List<Player> getTournamentPlayers(Long tournamentId) {
 
-    tournamentRepository.findById(tournamentId)
-        .orElseThrow(() -> new IllegalArgumentException("The tournament does not exist"));
+    tournamentRepository
+        .findById(tournamentId)
+        .orElseThrow(() -> new EntityNotFoundException("The tournament does not exist"));
 
     List<Player> players = playerRepository.findByTournamentId(tournamentId);
 
