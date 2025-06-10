@@ -1,7 +1,10 @@
 package com.vgt.tournaments.controller;
 
+import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.domain.Tournament;
-import com.vgt.tournaments.dto.CreateTournamentDto;
+import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+import com.vgt.tournaments.dto.PlayerResponseDto;
+import com.vgt.tournaments.dto.TournamentResponseDto;
 import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.services.TournamentService;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class TournamentController {
@@ -22,8 +26,9 @@ public class TournamentController {
 
   @PostMapping("/api/tournaments")
   @ResponseStatus(HttpStatus.CREATED)
-  public Tournament create(@RequestBody CreateTournamentDto dto) {
-    return tournamentService.create(dto);
+  public TournamentResponseDto create(@RequestBody CreateTournamentRequestDto dto) {
+    Tournament tournament = tournamentService.create(dto);
+    return TournamentResponseDto.from(tournament);
   }
 
   @PutMapping("/api/tournaments/{id}")
@@ -33,22 +38,34 @@ public class TournamentController {
   }
 
   @GetMapping("/api/tournaments")
-  public List<Tournament> findAll() {
-    return tournamentService.findAll();
+  public List<TournamentResponseDto> readAll() {
+    List<Tournament> tournaments = tournamentService.findAll();
+
+    return tournaments.stream()
+        .map(TournamentResponseDto::from)
+        .collect(Collectors.toList());
   }
 
+  @ResponseStatus(HttpStatus.OK)
   @GetMapping("/api/tournaments/{id}")
-  public Tournament findById(@PathVariable Long id) {
-    return tournamentService.findById(id);
+  public TournamentResponseDto readById(@PathVariable Long id) {
+    Tournament tournament = tournamentService.findById(id);
+    return TournamentResponseDto.from(tournament);
+  }
+
+  @GetMapping("/api/tournaments/{tournamentId}/players")
+  public List<PlayerResponseDto> readAllPlayersByTournamentId(@PathVariable Long tournamentId) {
+
+    List<Player> players = tournamentService.getTournamentPlayers(tournamentId);
+
+    return players.stream()
+        .map(PlayerResponseDto::from)
+        .collect(Collectors.toList());
   }
 
   @DeleteMapping("/api/tournaments/{id}")
-  ResponseEntity<Void> deleteTournament(@PathVariable Long id) {
-    try {
-      tournamentService.delete(id);
-      return ResponseEntity.noContent().build();
-    } catch (IllegalArgumentException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-    }
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable Long id) {
+    tournamentService.delete(id);
   }
 }

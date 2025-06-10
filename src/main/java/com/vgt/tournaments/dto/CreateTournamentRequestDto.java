@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Builder
 
-public record CreateTournamentDto(
+public record CreateTournamentRequestDto(
     String name,
     String gameTitle,
     int maxPlayers,
