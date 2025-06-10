@@ -1,5 +1,9 @@
 package com.vgt.tournaments;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
@@ -8,29 +12,19 @@ import com.vgt.tournaments.dto.UpdatePlayerDto;
 import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import com.vgt.tournaments.services.PlayerService;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
 
 class PlayerServiceTest {
 
     @Test
-<<<<<<< HEAD
     void testCreateSuccess() {
-=======
-    void testDelete() {
->>>>>>> main
         PlayerRepository playerRepository = mock(PlayerRepository.class);
         TournamentRepository tournamentRepository = mock(TournamentRepository.class);
         PlayerService playerService = new PlayerService(playerRepository, tournamentRepository);
 
-<<<<<<< HEAD
         CreatePlayerRequestDto dto = CreatePlayerRequestDto.builder()
             .name("Danna")
             .nickName("Sakura")
@@ -38,8 +32,6 @@ class PlayerServiceTest {
             .registrationDate(LocalDate.now())
             .build();
 
-=======
->>>>>>> main
         Player player = Player.builder()
             .name("Danna")
             .nickName("Sakura")
@@ -47,7 +39,6 @@ class PlayerServiceTest {
             .registrationDate(LocalDate.now().toEpochDay())
             .build();
 
-<<<<<<< HEAD
         Tournament tournament = Tournament.builder()
             .id(1L)
             .maxPlayers(10)
@@ -66,15 +57,8 @@ class PlayerServiceTest {
         assertEquals(player.getName(), createdPlayer.getName());
         assertEquals(player.getNickName(), createdPlayer.getNickName());
         assertEquals(player.getTournamentId(), createdPlayer.getTournamentId());
-=======
-        when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
-
-        playerService.delete(1L);
-
-        verify(playerRepository, times(1)).findById(1L);
-        verify(playerRepository, times(1)).delete(any());
->>>>>>> main
     }
+    
     @Test
     void testCreateFailsValidateMaxPlayers() {
         PlayerRepository playerRepository = mock(PlayerRepository.class);
