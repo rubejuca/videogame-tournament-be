@@ -6,9 +6,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vgt.tournaments.domain.Player;
 import com.vgt.tournaments.domain.Tournament;
 import com.vgt.tournaments.domain.enums.TournamentStatus;
 import com.vgt.tournaments.dto.CreateTournamentRequestDto;
+import com.vgt.tournaments.dto.UpdateTournamentDto;
 import com.vgt.tournaments.repositories.PlayerRepository;
 import com.vgt.tournaments.repositories.TournamentRepository;
 import java.time.LocalDate;
@@ -152,7 +154,71 @@ class TournamentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
         .andExpect(status().isBadRequest());
-    } 
+    }
+
+    @Test
+    void testUpdateTournament() throws Exception {
+
+    Tournament tournament = Tournament.builder()
+            .name("Torneo Individual")
+            .gameTitle("Tekken")
+            .maxPlayers(2)
+            .startDate(LocalDate.now().plusDays(2).toEpochDay())
+            .status(TournamentStatus.UPCOMING)
+            .build();
+
+    Tournament saved = tournamentRepository.save(tournament);
+
+
+    UpdateTournamentDto dto = UpdateTournamentDto.builder()
+            .name("Gran Final")
+            .gameTitle("League of Legends")
+            .maxPlayers(8)
+            .startDate(LocalDate.now().plusDays(5))
+            .status(TournamentStatus.STARTED)
+            .build();
+
+    mockMvc.perform(put("/api/tournaments/" + saved.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(dto)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", is("Gran Final")))
+            .andExpect(jsonPath("$.status", is("STARTED")));
+    }
+
+
+    @Test
+  void testReadAllPlayersByTournamentId () throws Exception {
+    Tournament tournament = Tournament.builder()
+            .name("Torneo Individual")
+            .gameTitle("Tekken")
+            .maxPlayers(2)
+            .startDate(LocalDate.now().plusDays(2).toEpochDay())
+            .status(TournamentStatus.UPCOMING)
+            .build();
+
+    Tournament saved = tournamentRepository.save(tournament);
+    Player p1 = Player.builder()
+            .name("Danna")
+            .nickName("Sakura")
+            .tournamentId(saved.getId())
+            .registrationDate(LocalDate.now().plusDays(2).toEpochDay())
+            .build();
+
+    Player p2 = Player.builder()
+            .name("Diana")
+            .nickName("Sakura")
+            .tournamentId(saved.getId())
+            .registrationDate(LocalDate.now().plusDays(2).toEpochDay())
+            .build();
+
+    playerRepository.save(p1);
+    playerRepository.save(p2);
+
+    mockMvc.perform(get("/api/tournaments/" + saved.getId() + "/players"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)));
+  }
 }
 
 
